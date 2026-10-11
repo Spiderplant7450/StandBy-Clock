@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clock</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+  body { display: flex; align-items: center; justify-content: center; font-family: "Oswald", "Arial Narrow", Impact, sans-serif; }
+  .wrap { display: flex; align-items: flex-start; gap: 2vw; }
+  #time { font-size: 30vw; line-height: 1; font-weight: 700; color: #5aa9f5; transform: skewX(-8deg); letter-spacing: -0.02em; white-space: nowrap; }
+  .info { padding-top: 3vw; font-size: 3.2vw; line-height: 1.2; color: #fff; font-weight: 700; }
+  #day { color: #5aa9f5; }
+  #fs { position: fixed; right: 20px; bottom: 20px; background: #1c1c1e; color: #fff; border: 0; border-radius: 10px; padding: 10px 16px; font: 600 15px Arial, sans-serif; cursor: pointer; opacity: .8; }
+  #fs:hover { opacity: 1; }
+  :fullscreen #fs { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="time">--:--</div>
+  <div class="info">
+    <div><span id="day">---</span> <span id="date">--</span></div>
+  </div>
+</div>
+<button id="fs">⛶ Full screen</button>
+<script>
+  let tz = Intl.DateTimeFormat().resolvedOptions().timeZone; // device time zone by default
+
+  function tick() {
+    const now = new Date();
+    const p = {};
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: tz, hour: "numeric", minute: "2-digit", hour12: true, weekday: "short", day: "numeric"
+    }).formatToParts(now).forEach(x => p[x.type] = x.value);
+    document.getElementById("time").textContent = p.hour + ":" + p.minute;
+    document.getElementById("day").textContent = p.weekday.toUpperCase();
+    document.getElementById("date").textContent = p.day;
+  }
+  tick(); setInterval(tick, 1000);
+
+  // Full screen button (hidden while in full screen)
+  const fs = document.getElementById("fs");
+  fs.onclick = () => document.documentElement.requestFullscreen();
+  document.addEventListener("fullscreenchange", () => {
+    fs.style.display = document.fullscreenElement ? "none" : "block";
+  });
+</script>
+</body>
+</html>
